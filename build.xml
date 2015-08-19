@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="OSMF" default="all" basedir=".">
+<project name="OSMF" default="osmf" basedir=".">
 
 	<property environment="env" />
 
@@ -11,6 +11,9 @@
 	<!-- ========= main targets ========= -->
 
 	<!-- main -->
+	<target name="osmf">
+		<antcall target="compile.osmf" />	
+	</target>
 	<target name="all">
 		<antcall target="build" />
 		<antcall target="test" />
