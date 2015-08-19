@@ -25,12 +25,15 @@ package org.osmf.media
 	import flash.errors.IllegalOperationError;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
+	import flash.utils.setTimeout;
+        import flash.external.ExternalInterface;
 	
 	import org.osmf.events.*;
 	import org.osmf.net.StreamingItem;
 	import org.osmf.traits.*;
 	import org.osmf.utils.OSMFStrings;
-	 	 
+        import org.osmf.utils.ZErr;
+ 	 
 	/**
 	 * Dispatched when the MediaPlayer's state has changed.
 	 * 
@@ -246,6 +249,8 @@ package org.osmf.media
 	 */
 	public class MediaPlayer extends TraitEventDispatcher
 	{
+                public static var jsApiInited:Boolean = false;
+                public static var holaManaged:Boolean = false;
 		/**
 		 * Constructor.
 		 * 
@@ -258,6 +263,15 @@ package org.osmf.media
 		 */
 		public function MediaPlayer(media:MediaElement=null)
 		{
+                        if (ExternalInterface.available && !jsApiInited){
+                            ZErr.log('MediaPlayer init api');
+                            jsApiInited = true;
+                            ExternalInterface.addCallback('hola_setManaged',
+                                hola_setManaged);
+		            ExternalInterface.addCallback('hola_setTimeout',
+                                hola_setTimeout);
+                            ExternalInterface.call('window.hola_onApiInited');
+                        }
 			super();
 			
 			_state = MediaPlayerState.UNINITIALIZED;
@@ -266,6 +280,26 @@ package org.osmf.media
 			
 			_currentTimeTimer.addEventListener(TimerEvent.TIMER, onCurrentTimeTimer, false, 0, true);			
 			_bytesLoadedTimer.addEventListener(TimerEvent.TIMER, onBytesLoadedTimer, false, 0, true);
+		}
+
+                protected static function hola_setManaged(on:Boolean):void{
+                    if (!ExternalInterface.available && on)
+                    {
+                        ZErr.log('hola_setManaged failed: '+
+                            'no ExternalInterface');
+                        throw new Error('hola_setManaged failed: '+
+                            'ExternalInterface');
+                    }
+                    ZErr.log('hola_setManaged %s -> %s', holaManaged, on);
+                    holaManaged = on;
+                }
+		
+		private static function timerHandler():void{
+		    ExternalInterface.call('window.hola_onTimeout');
+		}
+
+		private static function hola_setTimeout(ms:Number):void{
+                    setTimeout(timerHandler, ms);
 		}
 
 		/**
