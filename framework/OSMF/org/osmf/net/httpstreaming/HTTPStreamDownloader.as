@@ -37,8 +37,6 @@ package org.osmf.net.httpstreaming
 	import org.osmf.events.HTTPStreamingEventReason;
 	import org.osmf.net.httpstreaming.flv.FLVTagScriptDataMode;
 	import org.osmf.utils.OSMFSettings;
-	import org.osmf.utils.JSURLStream;
-	import org.osmf.utils.ZErr;
 
 	CONFIG::LOGGING
 	{
@@ -145,7 +143,7 @@ package org.osmf.net.httpstreaming
 			
 			if (_urlStream == null)
 			{
-				_urlStream = new JSURLStream();
+				_urlStream = new URLStream();
 				_urlStream.addEventListener(Event.OPEN, onOpen);
 				_urlStream.addEventListener(Event.COMPLETE, onComplete);
 				_urlStream.addEventListener(ProgressEvent.PROGRESS, onProgress);
