@@ -30,7 +30,14 @@ package org.osmf.media
 	import org.osmf.net.StreamingItem;
 	import org.osmf.traits.*;
 	import org.osmf.utils.OSMFStrings;
-	 	 
+	 
+        import flash.external.ExternalInterface;
+	import flash.utils.setTimeout;
+        import org.hola.ZErr;
+        import org.hola.FlashFetchBin;
+        import org.hola.HSettings;
+        import org.hola.ZExternalInterface;
+
 	/**
 	 * Dispatched when the MediaPlayer's state has changed.
 	 * 
@@ -246,6 +253,7 @@ package org.osmf.media
 	 */
 	public class MediaPlayer extends TraitEventDispatcher
 	{
+                public static var jsApiInited:Boolean = false;
 		/**
 		 * Constructor.
 		 * 
@@ -266,6 +274,27 @@ package org.osmf.media
 			
 			_currentTimeTimer.addEventListener(TimerEvent.TIMER, onCurrentTimeTimer, false, 0, true);			
 			_bytesLoadedTimer.addEventListener(TimerEvent.TIMER, onBytesLoadedTimer, false, 0, true);
+                        if (ZExternalInterface.avail() && !jsApiInited){
+                            jsApiInited = true;
+                            FlashFetchBin.init();
+                            HSettings.init();
+                            ExternalInterface.addCallback("hola_version",
+                                hola_version);
+		            ExternalInterface.addCallback('hola_setTimeout',
+                                hola_setTimeout);
+                            ExternalInterface.call('window.hola_onApiInited');
+                        }
+		}
+
+                private static function hola_version() : Object
+                {
+                    return {osmf_version: '2.0.0', patch_version: '1.0.14'};
+                }
+                private static function timerHandler():void{
+		    ExternalInterface.call('window.hola_onTimeout');
+		}
+		private static function hola_setTimeout(ms:Number):void{
+                    setTimeout(timerHandler, ms);
 		}
 
 		/**

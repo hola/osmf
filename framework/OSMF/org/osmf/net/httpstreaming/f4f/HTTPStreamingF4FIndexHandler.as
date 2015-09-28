@@ -28,6 +28,7 @@ package org.osmf.net.httpstreaming.f4f
 	import flash.utils.ByteArray;
 	import flash.utils.IDataInput;
 	import flash.utils.Timer;
+        import flash.external.ExternalInterface;
 	
 	import org.osmf.elements.f4mClasses.BootstrapInfo;
 	import org.osmf.events.DVRStreamInfoEvent;
@@ -47,6 +48,7 @@ package org.osmf.net.httpstreaming.f4f
 	import org.osmf.net.httpstreaming.flv.FLVTagScriptDataObject;
 	import org.osmf.utils.OSMFSettings;
 	import org.osmf.utils.URL;
+        import org.hola.HSettings;
 
 	CONFIG::LOGGING 
 	{	
@@ -668,7 +670,7 @@ package org.osmf.net.httpstreaming.f4f
 			var fdp:FragmentDurationPair = frt.fragmentDurationPairs[0];
 			var segId:uint = bootstrapBox.findSegmentId(fragment.fragId - fdp.firstFragment + 1);
 			
-			return constructFragmentRequest(_serverBaseURL, _streamNames[quality], segId, fragment.fragId);
+			return constructFragmentRequest(_serverBaseURL, _streamNames[quality], segId, fragment.fragId, fragment, quality);
 		}
 		
 		/**
@@ -679,7 +681,10 @@ package org.osmf.net.httpstreaming.f4f
 		 * @playerversion AIR 1.5
 		 * @productversion OSMF 1.6
 		 */
-		protected function constructFragmentRequest(serverBaseURL:String, streamName:String, segmentId:uint, fragmentId:uint):String
+		protected function constructFragmentRequest(
+                    serverBaseURL:String, streamName:String, segmentId:uint,
+                    fragmentId:uint, fragment:FragmentAccessInformation,
+                    quality:int):String
 		{
 			var requestUrl:String = "";
 			if (streamName != null && streamName.indexOf("http") != 0)
@@ -705,7 +710,15 @@ package org.osmf.net.httpstreaming.f4f
 			{
 				requestUrl += "#" + tempURL.fragment;
 			}
-			
+			if (HSettings.managed)
+			{
+		            ExternalInterface.call('window.hola_onSegment', {
+                                playlist_url: _streamInfos[quality].streamName,
+                                url: requestUrl,
+                                duration: fragment.fragDuration,
+                                media_index: fragment.fragId,
+                                bitrate: _streamInfos[quality].bitrate*1024});
+			}
 			return requestUrl;
 		}
 		
@@ -1821,7 +1834,9 @@ package org.osmf.net.httpstreaming.f4f
 				_serverBaseURL, // serverBaseURL
 				_streamNames[quality], // streamName
 				guessSegmentNumber, // segmentId
-				nextFragmentId); //fragmentId
+				nextFragmentId,
+                                _currentFAI,
+                                quality);
 			bestEffortLog("Best effort fetch for fragment "+nextFragmentId+" with url "+guessUrl+". State is "+_bestEffortState);
 			
 			// clean up best effort state
