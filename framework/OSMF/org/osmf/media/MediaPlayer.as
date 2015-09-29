@@ -34,8 +34,7 @@ package org.osmf.media
         import flash.external.ExternalInterface;
 	import flash.utils.setTimeout;
         import org.hola.ZErr;
-        import org.hola.FlashFetchBin;
-        import org.hola.HSettings;
+        import org.hola.JSAPI;
         import org.hola.ZExternalInterface;
 
 	/**
@@ -276,12 +275,9 @@ package org.osmf.media
 			_bytesLoadedTimer.addEventListener(TimerEvent.TIMER, onBytesLoadedTimer, false, 0, true);
                         if (ZExternalInterface.avail() && !jsApiInited){
                             jsApiInited = true;
-                            FlashFetchBin.init();
-                            HSettings.init();
+                            JSAPI.init();
                             ExternalInterface.addCallback("hola_version",
                                 hola_version);
-		            ExternalInterface.addCallback('hola_setTimeout',
-                                hola_setTimeout);
                             ExternalInterface.call('window.hola_onApiInited');
                         }
 		}
@@ -290,12 +286,6 @@ package org.osmf.media
                 {
                     return {osmf_version: '2.0.0', patch_version: '1.0.14'};
                 }
-                private static function timerHandler():void{
-		    ExternalInterface.call('window.hola_onTimeout');
-		}
-		private static function hola_setTimeout(ms:Number):void{
-                    setTimeout(timerHandler, ms);
-		}
 
 		/**
 		 * Source MediaElement controlled by this MediaPlayer.  Setting the media will attempt to load 

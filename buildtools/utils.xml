@@ -241,7 +241,7 @@
 				</compiler.external-library-path>
 
                 <compiler.library-path append="true" dir="@{projectDir}/libs/hola_as3/release">
-					<include name="hola_as3_0.0.1.swc" />
+					<include name="hola_as3_0.0.2.swc" />
 
 				</compiler.library-path>
 
