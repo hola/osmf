@@ -670,8 +670,8 @@ package org.osmf.net.httpstreaming
 					// if we are getting dry then go back into
 					// active play mode and get more bytes 
 					// from the stream provider
-					
-					if (!_waitForDRM && (this.bufferLength < _desiredBufferTime_Min || checkIfExtraBufferingNeeded()))
+
+				    	if (!_waitForDRM && (this.bufferLength < _desiredBufferTime_Max || checkIfExtraBufferingNeeded()))
 					{
 						setState(HTTPStreamingState.PLAY);
 					}

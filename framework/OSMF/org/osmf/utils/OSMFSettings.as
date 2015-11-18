@@ -64,7 +64,7 @@ package org.osmf.utils
 		/**
 		 * @private
 		 */
-		public static var hdsAdditionalBufferTime:Number = 2;
+		public static var hdsAdditionalBufferTime:Number = 36;
 		
 		/**
 		 * @private
