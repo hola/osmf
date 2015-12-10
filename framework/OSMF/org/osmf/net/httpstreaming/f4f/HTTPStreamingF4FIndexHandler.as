@@ -1190,7 +1190,7 @@ package org.osmf.net.httpstreaming.f4f
 		private function dispatchIndexLoadRequest(quality:int):void
 		{
 			var req:URLRequest = new URLRequest(_bootstrapBoxesURLs[quality]);
-			req.data = {type: "manifest"};
+			req.data = {type: "manifest", live: _bootstrapBoxes[quality] ? _bootstrapBoxes[quality].live : false};
 			dispatchEvent(
 				new HTTPStreamingIndexHandlerEvent( 
 					HTTPStreamingIndexHandlerEvent.REQUEST_LOAD_INDEX 
