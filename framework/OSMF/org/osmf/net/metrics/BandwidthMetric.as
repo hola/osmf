@@ -25,6 +25,8 @@ package org.osmf.net.metrics
 	import org.osmf.net.qos.FragmentDetails;
 	import org.osmf.net.qos.QoSInfo;
 	import org.osmf.net.qos.QoSInfoHistory;
+        import org.hola.ZExternalInterface;
+        import flash.external.ExternalInterface;
 
 	CONFIG::LOGGING
 	{
@@ -43,6 +45,8 @@ package org.osmf.net.metrics
 	 */
 	public class BandwidthMetric extends MetricBase
 	{
+                private static var hola_bw: Number = 0;
+
 		/**
 		 * Constructor.
 		 * 
@@ -62,7 +66,26 @@ package org.osmf.net.metrics
 			ABRUtils.validateWeights(weights);
 
 			_weights = weights.slice();
+
+         		if (ZExternalInterface.avail())
+		        {
+				ExternalInterface.addCallback('hola_setBandwidth', hola_setBandwidth);
+             			ExternalInterface.addCallback('hola_getBandwidth', hola_getBandwidth);
+             			ExternalInterface.addCallback('hola_getCalculatedBandwidth', hola_getCalculatedBandwidth);
+         		}
 		}
+
+      		protected static function hola_getBandwidth():Number{
+          		return hola_bw;
+      		}
+
+      		protected static function hola_setBandwidth(bw:Number):void{
+          		hola_bw = bw;
+      		}
+      
+      		protected function hola_getCalculatedBandwidth():Number{
+          		return this.getValueForced().value;
+      		}		
 		
 		/**
 		 * The weights of the fragments (starting with the most recent) 
@@ -87,6 +110,9 @@ package org.osmf.net.metrics
 		 */
 		override protected function getValueForced():MetricValue
 		{
+			if (hola_bw)
+			    return new MetricValue(hola_bw, true);
+			
 			var history:Vector.<QoSInfo> = qosInfoHistory.getHistory(_weights.length);
 			
 			var bandwidth:Number = 0;
