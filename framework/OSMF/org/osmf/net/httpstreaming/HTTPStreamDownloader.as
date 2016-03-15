@@ -66,10 +66,16 @@ package org.osmf.net.httpstreaming
 		 * @param dispatcher A dispatcher object used by HTTPStreamDownloader to
 		 * 					 dispatch any event. 
 		 **/
-		public function HTTPStreamDownloader()
+		public function HTTPStreamDownloader(type: String)
 		{
+		    _type = type;
 		}
 		
+		public function get type(): String
+		{
+		    return _type;
+		}
+
 		/**
 		 * Returns true if the HTTP stream source is open and false otherwise.
 		 **/
@@ -145,7 +151,7 @@ package org.osmf.net.httpstreaming
 			
 			if (_urlStream == null)
 			{
-				_urlStream = new JSURLStream();
+				_urlStream = type != HTTPStreamDownloader.INDEX ? new JSURLStream() : new URLStream();
 				_urlStream.addEventListener(Event.OPEN, onOpen);
 				_urlStream.addEventListener(Event.COMPLETE, onComplete);
 				_urlStream.addEventListener(ProgressEvent.PROGRESS, onProgress);
@@ -572,6 +578,7 @@ package org.osmf.net.httpstreaming
 		private var _urlStream:URLStream = null;
 		private var _request:URLRequest = null;
 		private var _dispatcher:IEventDispatcher = null;
+		private var _type: String;
 		
 		private var _downloadBeginDate:Date = null;
 		private var _downloadEndDate:Date = null;
@@ -582,6 +589,9 @@ package org.osmf.net.httpstreaming
 		private var _timeoutInterval:Number = 1000;
 		private var _currentRetry:Number = 0;
 		
+		public static const FRAGMENT: String = "fragment";
+		public static const INDEX: String = "index";
+	
 		CONFIG::LOGGING
 		{
 			private static const logger:org.osmf.logging.Logger = org.osmf.logging.Log.getLogger("org.osmf.net.httpstreaming.HTTPStreamDownloader");

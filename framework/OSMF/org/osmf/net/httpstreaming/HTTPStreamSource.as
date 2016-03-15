@@ -434,7 +434,7 @@ package org.osmf.net.httpstreaming
 							// then we use internal source to actually download the chunk
 							if (_downloader == null)
 							{
-								_downloader = new HTTPStreamDownloader();
+								_downloader = new HTTPStreamDownloader(HTTPStreamDownloader.FRAGMENT);
 							}
 							
 							var downloaderMonitor:IEventDispatcher = _dispatcher;
@@ -974,7 +974,7 @@ package org.osmf.net.httpstreaming
 		private var _endFragment:Boolean = false;
 		
 		private var _indexDownloaderMonitor:EventDispatcher = new EventDispatcher();
-		private var _indexDownloader:HTTPStreamDownloader = new HTTPStreamDownloader();
+		private var _indexDownloader:HTTPStreamDownloader = new HTTPStreamDownloader(HTTPStreamDownloader.INDEX);
 		private var _currentIndexDownloadEvent:HTTPStreamingIndexHandlerEvent = null;
 		private var _pendingIndexDownloadRequests:Vector.<HTTPStreamingIndexHandlerEvent> = new Vector.<HTTPStreamingIndexHandlerEvent>();
 		private var _pendingIndexDownloadRequestsLenght:int = 0;
