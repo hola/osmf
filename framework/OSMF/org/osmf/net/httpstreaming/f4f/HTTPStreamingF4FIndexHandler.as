@@ -48,7 +48,6 @@ package org.osmf.net.httpstreaming.f4f
 	import org.osmf.net.httpstreaming.flv.FLVTagScriptDataObject;
 	import org.osmf.utils.OSMFSettings;
 	import org.osmf.utils.URL;
-        import org.hola.HSettings;
 
 	CONFIG::LOGGING 
 	{	
@@ -709,15 +708,6 @@ package org.osmf.net.httpstreaming.f4f
 			if (tempURL.fragment != null && tempURL.fragment.length > 0)
 			{
 				requestUrl += "#" + tempURL.fragment;
-			}
-			if (HSettings.managed)
-			{
-		            ExternalInterface.call('window.hola_onSegment', {
-                                playlist_url: _streamInfos[quality].streamName,
-                                url: requestUrl,
-                                duration: fragment.fragDuration,
-                                media_index: fragment.fragId,
-                                bitrate: _streamInfos[quality].bitrate*1024});
 			}
 			return requestUrl;
 		}
