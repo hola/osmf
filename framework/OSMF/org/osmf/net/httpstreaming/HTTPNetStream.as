@@ -1396,7 +1396,7 @@ package org.osmf.net.httpstreaming
 			{
 				if (_initialTime < 0)
 				{
-					_initialTime = _dvrInfo != null ? _dvrInfo.startTime : currentTime;
+					_initialTime = _dvrInfo != null ? _dvrInfo.startTime : (_seekTime > 0 ? _playStart : currentTime);
 				}
 				if (_seekTime < 0)
 				{
@@ -1451,7 +1451,7 @@ package org.osmf.net.httpstreaming
 					}
 					if(_initialTime < 0)
 					{
-						_initialTime = currentTime;
+						_initialTime = _seekTime > 0 ? _playStart : currentTime;
 					}
 					
 					if (_enhancedSeekTags != null && _enhancedSeekTags.length > 0)
